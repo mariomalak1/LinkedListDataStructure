@@ -6,38 +6,40 @@
 #ifndef LINKEDLIST_LINKEDLISTHEADONLY_H
 #define LINKEDLIST_LINKEDLISTHEADONLY_H
 #include <iostream>
+template<class T>
 struct Node{
-    int value;
+    T value;
     Node * next;
     Node(){
         value = 0;
         next = nullptr;
     }
-    Node(int val){
+    Node(T val){
         value = val;
         next = nullptr;
     }
 };
 
+template<class T>
 class LinkedList{
 private:
-    Node * head;
+    Node<T> * head;
     int Size;
     void deleteList();
-    void copyList(const LinkedList & list);
+    void copyList(const LinkedList<T> & list);
 public:
     LinkedList();
 
-    LinkedList(int value);
+    LinkedList(T value);
 
     // copy constructor
-    LinkedList(const LinkedList &list);
+    LinkedList(const LinkedList<T> &list);
 
-    void insertFirst(int value);
+    void insertFirst(T value);
 
-    void insertLast(int value);
+    void insertLast(T value);
 
-    bool insert(int value, int pos);
+    bool insert(T value, int pos);
 
     int size() const;
 
@@ -45,42 +47,61 @@ public:
 
     bool isEmptyList();
 
-    Node & front();
+    Node<T> & front();
 
-    Node &back();
+    Node<T> &back();
 
     LinkedList & operator=(const LinkedList & list);
 
-    friend std::ostream& operator<<(std::ostream& out,const LinkedList & list);
+    friend std::ostream &operator<<(std::ostream &out, const LinkedList<T> &list){
+        if (list.head == nullptr){
+            out << "[]";
+            return out;
+        }
+        Node<T> *current;
+        current = list.head;
+        out << "[";
+        while (current->next != nullptr){
+            out << current->value << " -> ";
+            current = current->next;
+        }
+        out << current->value << "]";
+        return out;
+    }
 
     ~LinkedList();
 };
 
-LinkedList::LinkedList(){
+template<class T>
+LinkedList<T>::LinkedList(){
     Size = 0;
     head = nullptr;
 }
 
-LinkedList::LinkedList(int value){
-    Node * node = new Node(value);
+template<class T>
+LinkedList<T>::LinkedList(T value){
+    Node<T> * node = new Node<T>(value);
     head = node;
     Size = 1;
 }
 
-void LinkedList::deleteList(){
+template<class T>
+void LinkedList<T>::deleteList(){
     while (Size)
         deleteIndex(1);
 }
 
-LinkedList::LinkedList(const LinkedList &list){
+template<class T>
+LinkedList<T>::LinkedList(const LinkedList &list){
     // this default in any empty one
     this->Size = 0;
     head = nullptr;
     this->copyList(list);
 }
 
-void LinkedList::insertFirst(int value){
-    Node * node = new Node(value);
+template<class T>
+void LinkedList<T>::insertFirst(T value){
+    Node<T> * node = new Node<T>(value);
     if (head == nullptr){
         head = node;
     }else{
@@ -90,13 +111,14 @@ void LinkedList::insertFirst(int value){
     Size++;
 }
 
-void LinkedList::insertLast(int value){
-    Node * node = new Node(value);
+template<class T>
+void LinkedList<T>::insertLast(T value){
+    Node<T> * node = new Node<T>(value);
     if (head == nullptr){
         head = node;
     }
     else {
-        Node *current = head;
+        Node<T> *current = head;
         while (current->next != nullptr) {
             current = current->next;
         }
@@ -105,8 +127,9 @@ void LinkedList::insertLast(int value){
     Size++;
 }
 
-bool LinkedList::insert(int value, int pos){
-    Node * current = head;
+template<class T>
+bool LinkedList<T>::insert(T value, int pos){
+    Node<T> * current = head;
     if (pos > Size || pos <= 0){
         return false;
     }
@@ -115,7 +138,7 @@ bool LinkedList::insert(int value, int pos){
         pos--;
     }
     if (pos == 1){
-        Node * node = new Node(value);
+        Node<T> * node = new Node<T>(value);
         node->next = current->next;
         current->next = node;
         Size++;
@@ -126,11 +149,13 @@ bool LinkedList::insert(int value, int pos){
     return false;
 }
 
-int LinkedList::size() const{
+template<class T>
+int LinkedList<T>::size() const{
     return Size;
 }
 
-bool LinkedList::deleteIndex(int pos){
+template<class T>
+bool LinkedList<T>::deleteIndex(int pos){
     // if any invalid data will be out
     if (pos > Size || pos <= 0 || head == nullptr){
         return false;
@@ -143,7 +168,7 @@ bool LinkedList::deleteIndex(int pos){
             head = nullptr;
         }
         else{
-            Node * temp = head->next;
+            Node<T> * temp = head->next;
             delete head;
             head = temp;
             temp = nullptr;
@@ -154,7 +179,7 @@ bool LinkedList::deleteIndex(int pos){
 
         // delete from last index
     else if (pos == Size){
-        Node * current = head;
+        Node<T> * current = head;
         while (current != nullptr && pos > 2){
             current = current->next;
             pos--;
@@ -169,13 +194,13 @@ bool LinkedList::deleteIndex(int pos){
 
         // delete from any position in size the list
     else{
-        Node * current = head;
+        Node<T> * current = head;
         while (current != nullptr && pos > 1){
             current = current->next;
             pos--;
         }
         if (pos == 1){
-            Node * temp = current->next->next;
+            Node<T> * temp = current->next->next;
             delete current->next;
             current->next = temp;
             temp = nullptr;
@@ -186,43 +211,49 @@ bool LinkedList::deleteIndex(int pos){
     return false;
 }
 
-LinkedList &LinkedList::operator=(const LinkedList &list){
+template<class T>
+LinkedList<T> &LinkedList<T>::operator=(const LinkedList<T> &list){
     // delete this list
     deleteList();
     this->copyList(list);
     return *this;
 }
 
-std::ostream &operator<<(std::ostream &out, const LinkedList &list){
-    if (list.head == nullptr){
-        out << "[]" << std::endl;
-        return out;
-    }
-    Node *current;
-    current = list.head;
-    out << "[";
-    while (current->next != nullptr){
-        out << current->value << " -> ";
-        current = current->next;
-    }
-    out << current->value << "]";
-    return out;
-}
+//template<class T>
+//std::ostream &operator<<(std::ostream &out, const LinkedList<T> &list){
+//    if (list.head == nullptr){
+//        out << "[]";
+//        return out;
+//    }
+//    Node<T> *current;
+//    current = list.head;
+//    out << "[";
+//    while (current->next != nullptr){
+//        out << current->value << " -> ";
+//        current = current->next;
+//    }
+//    out << current->value << "]";
+//    return out;
+//}
 
-LinkedList::~LinkedList(){
+template<class T>
+LinkedList<T>::~LinkedList(){
     deleteList();
 }
 
-bool LinkedList::isEmptyList(){
+template<class T>
+bool LinkedList<T>::isEmptyList(){
     return (Size == 0);
 }
 
-Node &LinkedList::front() {
+template<class T>
+Node<T> &LinkedList<T>::front() {
     return *head;
 }
 
-Node &LinkedList::back() {
-    Node * current = head;
+template<class T>
+Node<T> &LinkedList<T>::back() {
+    Node<T> * current = head;
     if (head != nullptr) {
         while (current->next != nullptr) {
             current = current->next;
@@ -232,19 +263,20 @@ Node &LinkedList::back() {
     return *head;
 }
 
-void LinkedList::copyList(const LinkedList & list) {
+template<class T>
+void LinkedList<T>::copyList(const LinkedList<T> & list) {
     if (list.head != nullptr) {
 // current element in the come in list
-        Node *current = list.head;
+        Node<T> *current = list.head;
 // the new element
-        Node *node = new Node(current->value);
+        Node<T> *node = new Node<T>(current->value);
         this->head = node;
         this->Size++;
 
-        Node *thisCurrent = this->head;
+        Node<T> *thisCurrent = this->head;
 
         while (current->next != nullptr) {
-            Node *newNode = new Node(current->next->value);
+            Node<T> *newNode = new Node<T>(current->next->value);
             thisCurrent->next = newNode;
             thisCurrent = newNode;
             this->Size++;
