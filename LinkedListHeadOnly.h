@@ -24,6 +24,7 @@ private:
     Node * head;
     int Size;
     void deleteList();
+    void copyList(const LinkedList & list);
 public:
     LinkedList();
 
@@ -75,25 +76,7 @@ LinkedList::LinkedList(const LinkedList &list){
     // this default in any empty one
     this->Size = 0;
     head = nullptr;
-
-    if (list.head != nullptr){
-        // current element in the come in list
-        Node * current = list.head;
-        // the new element
-        Node * node = new Node(current->value);
-        this->head = node;
-        this->Size++;
-
-        Node * thisCurrent = this->head;
-
-        while (current->next != nullptr){
-            Node * newNode = new Node(current->next->value);
-            thisCurrent->next = newNode;
-            thisCurrent = newNode;
-            this->Size++;
-            current = current->next;
-        }
-    }
+    this->copyList(list);
 }
 
 void LinkedList::insertFirst(int value){
@@ -206,26 +189,7 @@ bool LinkedList::deleteIndex(int pos){
 LinkedList &LinkedList::operator=(const LinkedList &list){
     // delete this list
     deleteList();
-
-    if (list.head != nullptr){
-        // current element in the come in list
-        Node * current = list.head;
-        // the new element
-        Node * node = new Node(current->value);
-        this->head = node;
-        this->Size++;
-
-        Node * thisCurrent = this->head;
-
-        while (current->next != nullptr){
-            Node * newNode = new Node(current->next->value);
-            thisCurrent->next = newNode;
-            thisCurrent = newNode;
-            this->Size++;
-            current = current->next;
-        }
-    }
-
+    this->copyList(list);
     return *this;
 }
 
@@ -266,6 +230,27 @@ Node &LinkedList::back() {
         return *current;
     }
     return *head;
+}
+
+void LinkedList::copyList(const LinkedList & list) {
+    if (list.head != nullptr) {
+// current element in the come in list
+        Node *current = list.head;
+// the new element
+        Node *node = new Node(current->value);
+        this->head = node;
+        this->Size++;
+
+        Node *thisCurrent = this->head;
+
+        while (current->next != nullptr) {
+            Node *newNode = new Node(current->next->value);
+            thisCurrent->next = newNode;
+            thisCurrent = newNode;
+            this->Size++;
+            current = current->next;
+        }
+    }
 }
 
 #endif //LINKEDLIST_LINKEDLISTHEADONLY_H
